@@ -4,6 +4,7 @@ import com.optionsprocessor.model.OptionEvent;
 import com.optionsprocessor.model.StrikePrice;
 import lombok.SneakyThrows;
 import org.apache.tomcat.util.json.JSONParser;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -94,16 +95,32 @@ public class OptionEventTransformer {
                     .tradeTimeInLong((BigInteger) optionDetail.get("tradeTimeInLong"))
                     .quoteTimeInLong((BigInteger) optionDetail.get("quoteTimeInLong"))
                     .netChange((BigDecimal) optionDetail.get("netChange"))
-                    .volatility((BigDecimal) optionDetail.get("volatility"))
-                    .delta((BigDecimal) optionDetail.get("delta"))
-                    .gamma((BigDecimal) optionDetail.get("gamma"))
-                    .theta((BigDecimal) optionDetail.get("theta"))
-                    .vega((BigDecimal) optionDetail.get("vega"))
-                    .rho((BigDecimal) optionDetail.get("rho"))
+                    .volatility(
+                            optionDetail.get("volatility") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("volatility")
+                    )
+                    .delta(
+                            optionDetail.get("delta") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("delta")
+                    )
+                    .gamma(
+                            optionDetail.get("gamma") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("gamma")
+                    )
+                    .theta(
+                            optionDetail.get("theta") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("theta")
+                    )
+                    .vega(
+                            optionDetail.get("vega") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("vega")
+                    )
+                    .rho(
+                            optionDetail.get("rho") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("rho")
+                    )
                     .openInterest((BigInteger) optionDetail.get("openInterest"))
                     .timeValue((BigDecimal) optionDetail.get("timeValue"))
-                    .theoreticalOptionValue((BigDecimal) optionDetail.get("theoreticalOptionValue"))
-                    .theoreticalVolatility((BigDecimal) optionDetail.get("theoreticalVolatility"))
+                    .theoreticalOptionValue(
+                            optionDetail.get("theoreticalOptionValue") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("theoreticalOptionValue")
+                    )
+                    .theoreticalVolatility(
+                            optionDetail.get("theoreticalVolatility") instanceof String ? new BigDecimal(0) : (BigDecimal) optionDetail.get("theoreticalVolatility")
+                    )
                     .optionDeliverablesList(optionDetail.get("optionDeliverablesList"))
                     .strikePrice((BigDecimal) optionDetail.get("strikePrice"))
                     .expirationDate((BigInteger) optionDetail.get("expirationDate"))

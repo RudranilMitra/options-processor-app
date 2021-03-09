@@ -6,9 +6,11 @@ import lombok.SneakyThrows;
 import org.apache.tomcat.util.json.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
@@ -16,23 +18,27 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-public class OptionEventService implements Runnable{
+public class OptionEventService implements Runnable {
     private String accessToken;
     private String optionUrl;
     private HttpClient httpClient;
     private List<String> optionSymbol;
     private KafkaTemplate<String, OptionEvent> kafkaTemplate;
+    private String outboundTopicName;
 
     Logger logger = LoggerFactory.getLogger(OptionEventService.class);
 
-    public OptionEventService(String accessToken, List<String> optionSymbol, KafkaTemplate<String, OptionEvent> kafkaTemplate) {
+    public OptionEventService(String accessToken,
+                              List<String> optionSymbol,
+                              KafkaTemplate<String, OptionEvent> kafkaTemplate,
+                              String outboundTopicName) {
         this.accessToken = "Bearer ".concat(accessToken);
         httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
         this.optionSymbol = optionSymbol;
         this.kafkaTemplate = kafkaTemplate;
+        this.outboundTopicName = outboundTopicName;
     }
 
     @SneakyThrows
@@ -47,12 +53,10 @@ public class OptionEventService implements Runnable{
             logger.info("Fetching option stream for: ".concat(optionUrl));
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-
-
             OptionEvent optionEvent = OptionEventTransformer.stringToJsonObject(response.body());
 
             ListenableFuture<SendResult<String, OptionEvent>> future =
-                    kafkaTemplate.send("option_events_inbound", symbol, optionEvent);
+                    kafkaTemplate.send(outboundTopicName, symbol, optionEvent);
 
             future.addCallback(new ListenableFutureCallback<SendResult<String, OptionEvent>>() {
                 @Override
@@ -68,7 +72,7 @@ public class OptionEventService implements Runnable{
         }
     }
 
-    public void run(){
+    public void run() {
         postOptionEvent();
     }
 }
