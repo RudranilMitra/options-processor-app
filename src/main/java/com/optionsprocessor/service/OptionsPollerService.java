@@ -24,7 +24,7 @@ public class OptionsPollerService {
     private KafkaTemplate<String, OptionEvent> kafkaTemplate;
     @Autowired
     private ThreadingConfig threadingConfig;
-    @Value("${app.topic}")
+    @Value("${kafka.topic}")
     private String outboundTopicName;
 
     Logger logger = LoggerFactory.getLogger(OptionsPollerService.class);
