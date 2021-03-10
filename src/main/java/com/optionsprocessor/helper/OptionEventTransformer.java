@@ -31,15 +31,15 @@ public class OptionEventTransformer {
 
     private static List<StrikePrice> getCallKeys(LinkedHashMap optionEventMap) {
         LinkedHashMap optionTypeMap = ((LinkedHashMap) optionEventMap.get("callExpDateMap"));
-        return getCallExpirationDateKeys(optionTypeMap);
+        return getExpirationDateKeys(optionTypeMap);
     }
 
     private static List<StrikePrice> getPutKeys(LinkedHashMap optionEventMap) {
         LinkedHashMap optionTypeMap = ((LinkedHashMap) optionEventMap.get("putExpDateMap"));
-        return getPutExpirationDateKeys(optionTypeMap);
+        return getExpirationDateKeys(optionTypeMap);
     }
 
-    private static List<StrikePrice> getCallExpirationDateKeys(LinkedHashMap optionTypeMap) {
+    private static List<StrikePrice> getExpirationDateKeys(LinkedHashMap optionTypeMap) {
         List<StrikePrice> strikePrices = null;
         Set expirationDates = optionTypeMap.keySet();
         Iterator i = expirationDates.iterator();
@@ -47,25 +47,12 @@ public class OptionEventTransformer {
             if (strikePrices == null)
                 strikePrices = new LinkedList<>();
             String expirationDateKey = (String) i.next();
-            strikePrices.add(getStrikePrice((LinkedHashMap) optionTypeMap.get(expirationDateKey)));
+            getStrikePrice((LinkedHashMap) optionTypeMap.get(expirationDateKey), strikePrices);
         }
         return strikePrices;
     }
 
-    private static List<StrikePrice> getPutExpirationDateKeys(LinkedHashMap optionTypeMap) {
-        List<StrikePrice> strikePrices = null;
-        Set expirationDates = optionTypeMap.keySet();
-        Iterator i = expirationDates.iterator();
-        while (i.hasNext()) {
-            if (strikePrices == null)
-                strikePrices = new LinkedList<>();
-            String expirationDateKey = (String) i.next();
-            strikePrices.add(getStrikePrice((LinkedHashMap) optionTypeMap.get(expirationDateKey)));
-        }
-        return strikePrices;
-    }
-
-    private static StrikePrice getStrikePrice(LinkedHashMap expirationDateMap) {
+    private static void getStrikePrice(LinkedHashMap expirationDateMap, List<StrikePrice> strikePriceList) {
         StrikePrice strikePrice = null;
         Set strikePrices = expirationDateMap.keySet();
         Iterator i = strikePrices.iterator();
@@ -138,7 +125,7 @@ public class OptionEventTransformer {
                     .inTheMoney((Boolean) optionDetail.get("inTheMoney"))
                     .mini((Boolean) optionDetail.get("mini"))
                     .build();
+            strikePriceList.add(strikePrice);
         }
-        return strikePrice;
     }
 }

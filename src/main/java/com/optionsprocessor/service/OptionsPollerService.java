@@ -29,7 +29,7 @@ public class OptionsPollerService {
 
     Logger logger = LoggerFactory.getLogger(OptionsPollerService.class);
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     @SneakyThrows
     public void create() {
         String accessToken = accessTokenService.generateAccessToken();

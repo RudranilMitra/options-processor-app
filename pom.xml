@@ -8,7 +8,7 @@
 		<version>2.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example.optionsprocessor</groupId>
+	<groupId>com.optionsprocessor</groupId>
 	<artifactId>options-processor-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>options-processor-app</name>
